@@ -3,662 +3,914 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Studio - Admin Dashboard</title>
+    <title>Artisan Gallery - Custom Art Prints</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .admin-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .admin-header {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .admin-header h1 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .admin-header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-            border-left: 4px solid #667eea;
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 1.1em;
-        }
-
-        .admin-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .tab-button {
-            padding: 15px 25px;
-            background: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .tab-button.active {
+        .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
         }
-
-        .tab-content {
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .admin-panel {
             display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-
-        .tab-content.active {
+        .customer-panel {
             display: block;
         }
-
-        .upload-form {
-            display: grid;
-            gap: 20px;
-            max-width: 600px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #2c3e50;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .image-upload-area {
-            border: 3px dashed #ddd;
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .image-upload-area:hover {
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-
-        .upload-btn {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .artwork-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .artwork-item {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .artwork-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .alert {
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 8px;
+        .modal {
             display: none;
         }
-
-        .alert.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .modal.active {
+            display: flex;
         }
-
-        .orders-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            transition: all 0.3s ease;
         }
-
-        .orders-table th,
-        .orders-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        .file-upload-area:hover {
+            border-color: #6366f1;
+            background-color: #f8fafc;
         }
-
-        .orders-table th {
-            background: #f8f9fa;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .website-links {
-            background: #e8f4f8;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #3498db;
-            margin-bottom: 20px;
-        }
-
-        .link-item {
-            margin: 10px 0;
-            padding: 10px;
+        .art-print-card {
             background: white;
-            border-radius: 5px;
-            font-family: monospace;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-
-        @media (max-width: 768px) {
-            .admin-tabs {
-                flex-direction: column;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .price-tag {
+            background: linear-gradient(45deg, #f59e0b, #f97316);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-processing {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .status-completed {
+            background-color: #d1fae5;
+            color: #065f46;
         }
     </style>
 </head>
-<body>
-    <div class="admin-container">
-        <div class="admin-header">
-            <h1>🎨 Art Studio Admin Dashboard</h1>
-            <p>Manage your artwork, orders, and settings</p>
-        </div>
-
-        <!-- Website Links -->
-        <div class="website-links">
-            <h3>🔗 Your Website Links:</h3>
-            <div class="link-item">
-                <strong>Customer Website:</strong><br>
-                <a href="https://artbywillow.github.io/yoursartbywillow/" target="_blank">
-                    https://artbywillow.github.io/yoursartbywillow/
-                </a>
-            </div>
-            <div class="link-item">
-                <strong>Admin Dashboard:</strong><br>
-                https://artbywillow.github.io/yoursartbywillow/admin.html
-            </div>
-        </div>
-
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalArtworks">0</div>
-                <div class="stat-label">Total Artworks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalOrders">0</div>
-                <div class="stat-label">Total Orders</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="newOrders">0</div>
-                <div class="stat-label">New Orders</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalRevenue">$0</div>
-                <div class="stat-label">Total Revenue</div>
-            </div>
-        </div>
-
-        <div class="admin-tabs">
-            <button class="tab-button active" onclick="showTab('upload')">Upload Artwork</button>
-            <button class="tab-button" onclick="showTab('manage')">Manage Gallery</button>
-            <button class="tab-button" onclick="showTab('orders')">View Orders</button>
-            <button class="tab-button" onclick="showTab('settings')">Settings</button>
-        </div>
-
-        <!-- Upload Artwork Tab -->
-        <div id="upload" class="tab-content active">
-            <h2>Upload New Artwork</h2>
-            <div class="alert success" id="successAlert"></div>
-            <form class="upload-form" id="artworkForm">
-                <div class="form-group">
-                    <label for="artworkTitle">Artwork Title</label>
-                    <input type="text" id="artworkTitle" name="title" required placeholder="Enter artwork title">
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold">Artisan Gallery</h1>
                 </div>
-
-                <div class="form-group">
-                    <label for="artworkDescription">Description</label>
-                    <textarea id="artworkDescription" name="description" rows="4" placeholder="Describe your artwork..."></textarea>
+                <div class="flex items-center space-x-4">
+                    <button id="customer-view-btn" class="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all">Gallery</button>
+                    <button id="admin-view-btn" class="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all">Admin</button>
                 </div>
+            </div>
+        </div>
+    </nav>
 
-                <div class="form-group">
-                    <label for="artworkCategory">Category</label>
-                    <select id="artworkCategory" name="category">
-                        <option value="abstract">Abstract</option>
-                        <option value="landscape">Landscape</option>
-                        <option value="portrait">Portrait</option>
-                        <option value="still-life">Still Life</option>
-                        <option value="digital">Digital Art</option>
-                        <option value="mixed-media">Mixed Media</option>
-                        <option value="photography">Photography</option>
-                        <option value="other">Other</option>
-                    </select>
+    <!-- Customer Panel -->
+    <div id="customer-panel" class="customer-panel">
+        <!-- Hero Section -->
+        <section class="gradient-bg text-white py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="hero-image mb-8">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c4f4248c-d994-4e62-83b8-c4e4b0265e0d.png" alt="Modern art gallery interior with white walls displaying colorful abstract paintings under professional lighting" class="mx-auto rounded-lg shadow-xl" />
                 </div>
+                <h2 class="text-5xl font-bold mb-4">Custom Art Prints</h2>
+                <p class="text-xl mb-8">Transform your space with our premium custom art prints</p>
+                <button class="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">Explore Collection</button>
+            </div>
+        </section>
 
-                <div class="form-group">
-                    <label>Pricing (USD)</label>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
-                        <input type="number" name="price8x10" placeholder="8×10 Price" min="0" step="0.01">
-                        <input type="number" name="price11x14" placeholder="11×14 Price" min="0" step="0.01">
-                        <input type="number" name="price16x20" placeholder="16×20 Price" min="0" step="0.01">
-                        <input type="number" name="price18x24" placeholder="18×24 Price" min="0" step="0.01">
-                        <input type="number" name="price24x36" placeholder="24×36 Price" min="0" step="0.01">
+        <!-- Art Prints Gallery -->
+        <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h3 class="text-3xl font-bold text-center mb-12 text-gray-800">Available Art Prints</h3>
+            <div id="art-prints-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Art prints will be loaded here by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="admin-panel">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Admin Navigation -->
+            <div class="bg-white rounded-lg shadow-md mb-8">
+                <div class="flex flex-wrap justify-center space-x-1 p-4">
+                    <button class="admin-tab-btn px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold" data-tab="orders">Orders</button>
+                    <button class="admin-tab-btn px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300" data-tab="payments">Payment History</button>
+                    <button class="admin-tab-btn px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300" data-tab="gallery">Manage Gallery</button>
+                    <button class="admin-tab-btn px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300" data-tab="prices">Update Prices</button>
+                    <button class="admin-tab-btn px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300" data-tab="about">About</button>
+                </div>
+            </div>
+
+            <!-- Admin Content Sections -->
+            <div id="admin-orders" class="admin-content">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-2xl font-bold mb-6 text-gray-800">Order Management</h4>
+                    <div id="orders-list" class="space-y-4">
+                        <!-- Orders will be loaded here -->
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label>Artwork Image</label>
-                    <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
-                        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="previewImage(this)">
-                        <p>📷 Click to upload image or drag and drop</p>
-                        <small>Supported formats: JPG, PNG, GIF (Max 10MB)</small>
-                        <img id="imagePreview" style="max-width: 200px; max-height: 200px; margin-top: 10px; display: none; border-radius: 8px;">
+            <div id="admin-payments" class="admin-content hidden">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-2xl font-bold mb-6 text-gray-800">Payment History</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payments-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Payment history will be loaded here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </div>
 
-                <button type="submit" class="upload-btn">Upload Artwork</button>
-            </form>
-        </div>
+            <div id="admin-gallery" class="admin-content hidden">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-2xl font-bold mb-6 text-gray-800">Manage Gallery</h4>
+                    <div class="mb-6">
+                        <button id="add-artwork-btn" class="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700">Add New Artwork</button>
+                    </div>
+                    <div id="admin-gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Gallery management will be loaded here -->
+                    </div>
+                </div>
+            </div>
 
-        <!-- Manage Gallery Tab -->
-        <div id="manage" class="tab-content">
-            <h2>Manage Artwork Gallery</h2>
-            <div class="artwork-grid" id="artworkGallery">
-                <p>Upload your first artwork to see it here!</p>
+            <div id="admin-prices" class="admin-content hidden">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-2xl font-bold mb-6 text-gray-800">Update Prices</h4>
+                    <div id="price-settings" class="space-y-6">
+                        <!-- Price settings will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-about" class="admin-content hidden">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="text-2xl font-bold mb-6 text-gray-800">About Section</h4>
+                    <form id="about-form" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gallery Name</label>
+                            <input type="text" id="gallery-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" value="Artisan Gallery">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea id="gallery-description" rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">Welcome to Artisan Gallery, where creativity meets craftsmanship. We specialize in creating custom art prints that transform your space into a personal sanctuary of beauty and inspiration.</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+                            <input type="email" id="contact-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" value="info@artisangallery.com">
+                        </div>
+                        <button type="submit" class="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700">Save Changes</button>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Orders Tab -->
-        <div id="orders" class="tab-content">
-            <h2>Customer Orders</h2>
-            <table class="orders-table">
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th>Artwork</th>
-                        <th>Size</th>
-                        <th>Price</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody id="ordersTableBody">
-                    <tr>
-                        <td colspan="6" style="text-align: center; color: #666;">
-                            No orders yet. Orders will appear here when customers place them.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- Order Modal -->
+    <div id="order-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Order Custom Print</h3>
+                    <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="order-form" class="space-y-6">
+                    <div id="selected-artwork" class="mb-6">
+                        <!-- Selected artwork will be shown here -->
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Size</label>
+                            <select id="print-size" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <option value="8x10">8" x 10" - $25</option>
+                                <option value="11x14">11" x 14" - $35</option>
+                                <option value="16x20">16" x 20" - $55</option>
+                                <option value="18x24">18" x 24" - $75</option>
+                                <option value="24x36">24" x 36" - $125</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Paper Type</label>
+                            <select id="paper-type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <option value="matte">Matte Finish</option>
+                                <option value="glossy">Glossy Finish</option>
+                                <option value="canvas">Canvas Print (+$20)</option>
+                                <option value="metal">Metal Print (+$35)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Customization Requests</label>
+                        <textarea id="customization-notes" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="Describe any color changes, text additions, or other customizations..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Reference Photos (Optional)</label>
+                        <div id="file-upload-area" class="file-upload-area border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer">
+                            <div class="space-y-2">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <p class="text-gray-600">Click to upload reference photos or drag and drop</p>
+                                <p class="text-sm text-gray-500">PNG, JPG up to 10MB each</p>
+                            </div>
+                            <input type="file" id="reference-files" multiple accept="image/*" class="hidden">
+                        </div>
+                        <div id="uploaded-files" class="mt-4 space-y-2">
+                            <!-- Uploaded files will be shown here -->
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                            <input type="text" id="customer-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="customer-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Shipping Address</label>
+                        <textarea id="shipping-address" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" required placeholder="Full shipping address..."></textarea>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-center text-lg font-semibold">
+                            <span>Total:</span>
+                            <span id="order-total">$25.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="button" id="cancel-order" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">Cancel</button>
+                        <button type="submit" class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700">Place Order</button>
+                    </div>
+                </form>
+            </div>
         </div>
+    </div>
 
-        <!-- Settings Tab -->
-        <div id="settings" class="tab-content">
-            <h2>Settings & Notifications</h2>
-            <div style="max-width: 600px;">
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                    <h3>📧 Email Notifications</h3>
-                    <div class="form-group">
-                        <label for="notificationEmail">Your Email Address</label>
-                        <input type="email" id="notificationEmail" placeholder="your-email@gmail.com">
-                    </div>
-                    <label style="margin-top: 10px;">
-                        <input type="checkbox" id="emailOnOrder" checked> Email me when new orders arrive
-                    </label>
+    <!-- Add Artwork Modal -->
+    <div id="add-artwork-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Add New Artwork</h3>
+                    <button id="close-artwork-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
-
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                    <h3>🌐 Website Settings</h3>
-                    <div class="form-group">
-                        <label for="studioName">Studio Name</label>
-                        <input type="text" id="studioName" placeholder="Your Art Studio Name">
+                
+                <form id="add-artwork-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Artwork Title</label>
+                        <input type="text" id="artwork-title" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
                     </div>
-                    <div class="form-group">
-                        <label for="contactEmail">Contact Email (Public)</label>
-                        <input type="email" id="contactEmail" placeholder="contact@yourstudio.com">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="artwork-description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="websiteUrl">Your Website URL</label>
-                        <input type="url" id="websiteUrl" value="https://artbywillow.github.io/yoursartbywillow/" readonly>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Base Price</label>
+                        <input type="number" id="artwork-price" class="w-full px-4 py-2 border border-gray-300 rounded-lg" min="0" step="0.01" required>
                     </div>
-                </div>
-
-                <button class="upload-btn" onclick="saveSettings()">💾 Save Settings</button>
+                    
+                    <div class="flex space-x-4">
+                        <button type="button" id="cancel-artwork" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Add Artwork</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <script>
-        // Simple data management
-        let artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
-        let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-        let settings = JSON.parse(localStorage.getItem('settings') || '{}');
+        // Data Storage
+        let artPrints = [
+            {
+                id: 1,
+                title: "Abstract Serenity",
+                description: "A calming blend of blues and whites that evokes tranquility",
+                basePrice: 25,
+                image: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3bb5495d-b930-4d61-b7da-3d6a59347caa.png",
+                alt: "Abstract painting with flowing blue and white brushstrokes creating a serene waterfall effect"
+            },
+            {
+                id: 2,
+                title: "Urban Sunset",
+                description: "Vibrant cityscape capturing the golden hour magic",
+                basePrice: 30,
+                image: "https://placehold.co/400x500",
+                alt: "Modern city skyline silhouetted against a dramatic orange and purple sunset with tall buildings and glowing windows"
+            },
+            {
+                id: 3,
+                title: "Botanical Dreams",
+                description: "Delicate botanical illustrations in soft watercolors",
+                basePrice: 28,
+                image: "https://placehold.co/400x500",
+                alt: "Watercolor painting of tropical leaves and flowers in soft greens and pink tones with detailed botanical accuracy"
+            },
+            {
+                id: 4,
+                title: "Geometric Harmony",
+                description: "Modern geometric patterns in bold, contrasting colors",
+                basePrice: 32,
+                image: "https://placehold.co/400x500",
+                alt: "Contemporary geometric art featuring interlocking triangles and circles in bold navy, gold, and coral colors"
+            },
+            {
+                id: 5,
+                title: "Mountain Vista",
+                description: "Majestic mountain landscape with ethereal morning mist",
+                basePrice: 35,
+                image: "https://placehold.co/400x500",
+                alt: "Realistic mountain landscape painting showing snow-capped peaks emerging from morning mist with pine forests in the foreground"
+            },
+            {
+                id: 6,
+                title: "Ocean Waves",
+                description: "Dynamic seascape capturing the power and beauty of ocean waves",
+                basePrice: 33,
+                image: "https://placehold.co/400x500",
+                alt: "Dramatic seascape painting showing large ocean waves crashing with white foam and spray against a stormy blue-gray sky"
+            }
+        ];
 
-        // Update statistics
-        function updateStats() {
-            document.getElementById('totalArtworks').textContent = artworks.length;
-            document.getElementById('totalOrders').textContent = orders.length;
-            
-            const newOrders = orders.filter(order => order.status === 'new').length;
-            document.getElementById('newOrders').textContent = newOrders;
-            
-            const revenue = orders.reduce((total, order) => total + (parseFloat(order.price) || 0), 0);
-            document.getElementById('totalRevenue').textContent = `$${revenue.toFixed(2)}`;
+        let orders = [
+            {
+                id: 'ORD-001',
+                artworkId: 1,
+                artworkTitle: 'Abstract Serenity',
+                customerName: 'Sarah Johnson',
+                customerEmail: 'sarah@email.com',
+                size: '16x20',
+                paperType: 'canvas',
+                customization: 'Please make the blues slightly more teal',
+                total: 75,
+                status: 'processing',
+                date: '2024-01-15',
+                shippingAddress: '123 Main St, Anytown, USA 12345'
+            },
+            {
+                id: 'ORD-002',
+                artworkId: 2,
+                artworkTitle: 'Urban Sunset',
+                customerName: 'Mike Chen',
+                customerEmail: 'mike@email.com',
+                size: '24x36',
+                paperType: 'matte',
+                customization: 'Add "DOWNTOWN" text at the bottom',
+                total: 155,
+                status: 'completed',
+                date: '2024-01-12',
+                shippingAddress: '456 Oak Ave, Another City, USA 67890'
+            }
+        ];
+
+        let sizeOptions = {
+            '8x10': 25,
+            '11x14': 35,
+            '16x20': 55,
+            '18x24': 75,
+            '24x36': 125
+        };
+
+        let paperOptions = {
+            'matte': 0,
+            'glossy': 0,
+            'canvas': 20,
+            'metal': 35
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            loadArtPrints();
+            setupEventListeners();
+            loadOrders();
+            loadPaymentHistory();
+            loadGalleryManagement();
+            loadPriceSettings();
         }
 
-        // Tab switching
-        function showTab(tabName) {
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(tab => tab.classList.remove('active'));
-            
-            const tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+        function setupEventListeners() {
+            // Navigation
+            document.getElementById('customer-view-btn').addEventListener('click', () => switchView('customer'));
+            document.getElementById('admin-view-btn').addEventListener('click', () => switchView('admin'));
 
-            if (tabName === 'manage') {
-                loadArtworkGallery();
-            } else if (tabName === 'orders') {
+            // Admin tabs
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => switchAdminTab(e.target.dataset.tab));
+            });
+
+            // Modal controls
+            document.getElementById('close-modal').addEventListener('click', closeOrderModal);
+            document.getElementById('cancel-order').addEventListener('click', closeOrderModal);
+            document.getElementById('close-artwork-modal').addEventListener('click', closeArtworkModal);
+            document.getElementById('cancel-artwork').addEventListener('click', closeArtworkModal);
+
+            // Forms
+            document.getElementById('order-form').addEventListener('submit', handleOrderSubmission);
+            document.getElementById('add-artwork-form').addEventListener('submit', handleArtworkAddition);
+            document.getElementById('about-form').addEventListener('submit', handleAboutUpdate);
+
+            // File upload
+            document.getElementById('file-upload-area').addEventListener('click', () => {
+                document.getElementById('reference-files').click();
+            });
+            document.getElementById('reference-files').addEventListener('change', handleFileUpload);
+
+            // Price calculation
+            document.getElementById('print-size').addEventListener('change', calculateOrderTotal);
+            document.getElementById('paper-type').addEventListener('change', calculateOrderTotal);
+
+            // Add artwork button
+            document.getElementById('add-artwork-btn').addEventListener('click', () => {
+                document.getElementById('add-artwork-modal').classList.add('active');
+            });
+        }
+
+        function switchView(view) {
+            const customerPanel = document.getElementById('customer-panel');
+            const adminPanel = document.getElementById('admin-panel');
+            const customerBtn = document.getElementById('customer-view-btn');
+            const adminBtn = document.getElementById('admin-view-btn');
+
+            if (view === 'customer') {
+                customerPanel.style.display = 'block';
+                adminPanel.style.display = 'none';
+                customerBtn.classList.add('bg-white', 'bg-opacity-30');
+                adminBtn.classList.remove('bg-white', 'bg-opacity-30');
+            } else {
+                customerPanel.style.display = 'none';
+                adminPanel.style.display = 'block';
+                adminBtn.classList.add('bg-white', 'bg-opacity-30');
+                customerBtn.classList.remove('bg-white', 'bg-opacity-30');
+            }
+        }
+
+        function switchAdminTab(tab) {
+            // Hide all content sections
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Show selected content
+            document.getElementById(`admin-${tab}`).classList.remove('hidden');
+
+            // Update tab buttons
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('bg-purple-600', 'text-white');
+            document.querySelector(`[data-tab="${tab}"]`).classList.remove('bg-gray-200', 'text-gray-700');
+        }
+
+        function loadArtPrints() {
+            const grid = document.getElementById('art-prints-grid');
+            grid.innerHTML = '';
+
+            artPrints.forEach(print => {
+                const printCard = createArtPrintCard(print);
+                grid.appendChild(printCard);
+            });
+        }
+
+        function createArtPrintCard(print) {
+            const card = document.createElement('div');
+            card.className = 'art-print-card card-hover';
+            card.innerHTML = `
+                <div class="relative">
+                    <img src="${print.image}" alt="${print.alt}" class="w-full h-64 object-cover" />
+                    <div class="absolute top-4 right-4">
+                        <span class="price-tag">From $${print.basePrice}</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h4 class="text-xl font-bold text-gray-800 mb-2">${print.title}</h4>
+                    <p class="text-gray-600 mb-4">${print.description}</p>
+                    <button class="w-full bg-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-purple-700 transition-colors" onclick="openOrderModal(${print.id})">
+                        Order Custom Print
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function openOrderModal(artworkId) {
+            const artwork = artPrints.find(art => art.id === artworkId);
+            if (!artwork) return;
+
+            const modal = document.getElementById('order-modal');
+            const selectedArtwork = document.getElementById('selected-artwork');
+
+            selectedArtwork.innerHTML = `
+                <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                    <img src="${artwork.image}" alt="${artwork.alt}" class="w-20 h-20 object-cover rounded" />
+                    <div>
+                        <h4 class="font-bold text-gray-800">${artwork.title}</h4>
+                        <p class="text-gray-600">${artwork.description}</p>
+                        <p class="text-sm text-gray-500">Base price: $${artwork.basePrice}</p>
+                    </div>
+                </div>
+            `;
+
+            // Store artwork ID for order processing
+            document.getElementById('order-form').dataset.artworkId = artworkId;
+            
+            calculateOrderTotal();
+            modal.classList.add('active');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal').classList.remove('active');
+            document.getElementById('order-form').reset();
+            document.getElementById('uploaded-files').innerHTML = '';
+        }
+
+        function closeArtworkModal() {
+            document.getElementById('add-artwork-modal').classList.remove('active');
+            document.getElementById('add-artwork-form').reset();
+        }
+
+        function calculateOrderTotal() {
+            const sizeSelect = document.getElementById('print-size');
+            const paperSelect = document.getElementById('paper-type');
+            const totalElement = document.getElementById('order-total');
+
+            if (!sizeSelect.value || !paperSelect.value) return;
+
+            const sizePrice = sizeOptions[sizeSelect.value] || 0;
+            const paperPrice = paperOptions[paperSelect.value] || 0;
+            const total = sizePrice + paperPrice;
+
+            totalElement.textContent = `$${total.toFixed(2)}`;
+        }
+
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const uploadedFilesDiv = document.getElementById('uploaded-files');
+
+            Array.from(files).forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+                fileItem.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-700">${file.name}</span>
+                        <span class="text-xs text-gray-500">(${(file.size / 1024 / 1024).toFixed(1)}MB)</span>
+                    </div>
+                    <button type="button" class="text-red-500 hover:text-red-700" onclick="removeFile(this)">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                `;
+                uploadedFilesDiv.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(button) {
+            button.parentElement.parentElement.remove();
+        }
+
+        function handleOrderSubmission(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const artworkId = parseInt(event.target.dataset.artworkId);
+            const artwork = artPrints.find(art => art.id === artworkId);
+            
+            const order = {
+                id: `ORD-${String(orders.length + 1).padStart(3, '0')}`,
+                artworkId: artworkId,
+                artworkTitle: artwork.title,
+                customerName: document.getElementById('customer-name').value,
+                customerEmail: document.getElementById('customer-email').value,
+                size: document.getElementById('print-size').value,
+                paperType: document.getElementById('paper-type').value,
+                customization: document.getElementById('customization-notes').value,
+                shippingAddress: document.getElementById('shipping-address').value,
+                total: parseFloat(document.getElementById('order-total').textContent.replace('$', '')),
+                status: 'pending',
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            orders.unshift(order);
+            closeOrderModal();
+            
+            // Show success message
+            alert(`Order ${order.id} has been placed successfully! You will receive a confirmation email shortly.`);
+            
+            // Refresh admin orders if currently viewing
+            if (document.getElementById('admin-panel').style.display !== 'none') {
                 loadOrders();
             }
         }
 
-        // Image preview
-        function previewImage(input) {
-            const preview = document.getElementById('imagePreview');
-            const uploadText = document.querySelector('.image-upload-area p');
+        function handleArtworkAddition(event) {
+            event.preventDefault();
             
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    uploadText.textContent = 'Image selected! Click to change.';
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // Upload artwork
-        document.getElementById('artworkForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const imageFile = document.getElementById('imageInput').files[0];
-            
-            if (!imageFile) {
-                alert('Please select an image for your artwork.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const prices = {
-                    '8x10': parseFloat(formData.get('price8x10')) || 0,
-                    '11x14': parseFloat(formData.get('price11x14')) || 0,
-                    '16x20': parseFloat(formData.get('price16x20')) || 0,
-                    '18x24': parseFloat(formData.get('price18x24')) || 0,
-                    '24x36': parseFloat(formData.get('price24x36')) || 0
-                };
-
-                const validPrices = Object.values(prices).filter(p => p > 0);
-                const artwork = {
-                    id: 'ART' + Date.now(),
-                    title: formData.get('title'),
-                    description: formData.get('description'),
-                    category: formData.get('category'),
-                    prices: prices,
-                    minPrice: Math.min(...validPrices),
-                    maxPrice: Math.max(...validPrices),
-                    imageUrl: e.target.result,
-                    dateAdded: new Date().toISOString()
-                };
-                
-                artworks.push(artwork);
-                localStorage.setItem('artworks', JSON.stringify(artworks));
-                updateStats();
-                
-                // Show success message
-                const alert = document.getElementById('successAlert');
-                alert.textContent = 'Artwork uploaded successfully!';
-                alert.style.display = 'block';
-                setTimeout(() => alert.style.display = 'none', 5000);
-                
-                // Reset form
-                document.getElementById('artworkForm').reset();
-                document.getElementById('imagePreview').style.display = 'none';
-                document.querySelector('.image-upload-area p').textContent = '📷 Click to upload image or drag and drop';
+            const newArtwork = {
+                id: Math.max(...artPrints.map(art => art.id)) + 1,
+                title: document.getElementById('artwork-title').value,
+                description: document.getElementById('artwork-description').value,
+                basePrice: parseFloat(document.getElementById('artwork-price').value),
+                image: 'https://placehold.co/400x500',
+                alt: `${document.getElementById('artwork-title').value} - ${document.getElementById('artwork-description').value} artwork with vibrant colors and artistic composition`
             };
+
+            artPrints.push(newArtwork);
+            loadArtPrints();
+            loadGalleryManagement();
+            closeArtworkModal();
             
-            reader.readAsDataURL(imageFile);
-        });
-
-        // Load artwork gallery
-        function loadArtworkGallery() {
-            const gallery = document.getElementById('artworkGallery');
-            gallery.innerHTML = '';
-
-            if (artworks.length === 0) {
-                gallery.innerHTML = '<p>No artworks uploaded yet. Upload your first artwork to get started!</p>';
-                return;
-            }
-
-            artworks.forEach(artwork => {
-                const artworkDiv = document.createElement('div');
-                artworkDiv.className = 'artwork-item';
-                artworkDiv.innerHTML = `
-                    <img src="${artwork.imageUrl}" alt="${artwork.title}">
-                    <h3>${artwork.title}</h3>
-                    <p>${artwork.description}</p>
-                    <p><strong>Category:</strong> ${artwork.category}</p>
-                    <p><strong>Prices:</strong> $${artwork.minPrice} - $${artwork.maxPrice}</p>
-                `;
-                gallery.appendChild(artworkDiv);
-            });
+            alert('New artwork added successfully!');
         }
 
-        // Load orders
+        function handleAboutUpdate(event) {
+            event.preventDefault();
+            alert('About section updated successfully!');
+        }
+
         function loadOrders() {
-            const tbody = document.getElementById('ordersTableBody');
-            tbody.innerHTML = '';
+            const ordersList = document.getElementById('orders-list');
+            ordersList.innerHTML = '';
 
             if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No orders yet. Orders will appear here when customers place them.</td></tr>';
+                ordersList.innerHTML = '<p class="text-gray-500 text-center py-8">No orders yet.</p>';
                 return;
             }
 
             orders.forEach(order => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${order.id}</td>
-                    <td>${order.customerName}<br><small>${order.customerEmail}</small></td>
-                    <td>${order.artwork}</td>
-                    <td>${order.size}</td>
-                    <td>$${order.price}</td>
-                    <td>${new Date(order.timestamp).toLocaleDateString()}</td>
+                const orderCard = document.createElement('div');
+                orderCard.className = 'border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow';
+                orderCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h5 class="font-bold text-lg text-gray-800">Order ${order.id}</h5>
+                            <p class="text-gray-600">${order.artworkTitle}</p>
+                        </div>
+                        <span class="order-status status-${order.status}">${order.status.toUpperCase()}</span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                            <span class="font-medium text-gray-700">Customer:</span>
+                            <p class="text-gray-600">${order.customerName}</p>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Size:</span>
+                            <p class="text-gray-600">${order.size.replace('x', ' x ')}"</p>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Total:</span>
+                            <p class="text-gray-600">$${order.total}</p>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Date:</span>
+                            <p class="text-gray-600">${order.date}</p>
+                        </div>
+                    </div>
+                    ${order.customization ? `
+                        <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
+                            <span class="font-medium text-yellow-800">Customization:</span>
+                            <p class="text-yellow-700 text-sm mt-1">${order.customization}</p>
+                        </div>
+                    ` : ''}
+                    <div class="mt-4 flex space-x-2">
+                        <button onclick="updateOrderStatus('${order.id}', 'processing')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm hover:bg-blue-200">Mark Processing</button>
+                        <button onclick="updateOrderStatus('${order.id}', 'completed')" class="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200">Mark Complete</button>
+                        <button onclick="viewOrderDetails('${order.id}')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">View Details</button>
+                    </div>
                 `;
-                tbody.appendChild(row);
+                ordersList.appendChild(orderCard);
             });
         }
 
-        // Save settings
-        function saveSettings() {
-            settings = {
-                notificationEmail: document.getElementById('notificationEmail').value,
-                studioName: document.getElementById('studioName').value,
-                contactEmail: document.getElementById('contactEmail').value,
-                websiteUrl: document.getElementById('websiteUrl').value,
-                emailOnOrder: document.getElementById('emailOnOrder').checked
-            };
-            
-            localStorage.setItem('settings', JSON.stringify(settings));
-            
-            const alert = document.getElementById('successAlert');
-            alert.textContent = 'Settings saved successfully!';
-            alert.style.display = 'block';
-            setTimeout(() => alert.style.display = 'none', 5000);
+        function updateOrderStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                loadOrders();
+                loadPaymentHistory();
+                alert(`Order ${orderId} status updated to ${newStatus}!`);
+            }
         }
 
-        // Load saved settings
-        document.addEventListener('DOMContentLoaded', function() {
-            if (settings.notificationEmail) {
-                document.getElementById('notificationEmail').value = settings.notificationEmail;
+        function viewOrderDetails(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                alert(`Order Details:\n\nOrder ID: ${order.id}\nCustomer: ${order.customerName}\nEmail: ${order.customerEmail}\nArtwork: ${order.artworkTitle}\nSize: ${order.size}\nPaper: ${order.paperType}\nTotal: $${order.total}\nShipping: ${order.shippingAddress}\nCustomization: ${order.customization || 'None'}`);
             }
-            if (settings.studioName) {
-                document.getElementById('studioName').value = settings.studioName;
-            }
-            if (settings.contactEmail) {
-                document.getElementById('contactEmail').value = settings.contactEmail;
-            }
-            document.getElementById('emailOnOrder').checked = settings.emailOnOrder !== false;
-            
-            updateStats();
-        });
-
-        // Drag and drop functionality
-        const uploadArea = document.querySelector('.image-upload-area');
-        
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
-        
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                document.getElementById('imageInput').files = files;
-                previewImage(document.getElementById('imageInput'));
-            }
-        });
-
-        // Simulate receiving an order (for testing)
-        function addTestOrder() {
-            const testOrder = {
-                id: 'ORD' + Date.now(),
-                customerName: 'Test Customer',
-                customerEmail: 'test@email.com',
-                artwork: 'Test Artwork',
-                size: '16x20',
-                price: '55.00',
-                status: 'new',
-                timestamp: new Date().toISOString()
-            };
-            
-            orders.push(testOrder);
-            localStorage.setItem('orders', JSON.stringify(orders));
-            updateStats();
-            loadOrders();
-            
-            // Show notification
-            const alert = document.getElementById('successAlert');
-            alert.textContent = 'Test order added successfully!';
-            alert.style.display = 'block';
-            setTimeout(() => alert.style.display = 'none', 5000);
         }
+
+        function loadPaymentHistory() {
+            const paymentsTableBody = document.getElementById('payments-table-body');
+            paymentsTableBody.innerHTML = '';
+
+            const completedOrders = orders.filter(order => order.status === 'completed');
+
+            if (completedOrders.length === 0) {
+                paymentsTableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No completed payments yet.</td></tr>';
+                return;
+            }
+
+            completedOrders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${order.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${order.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${order.customerName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${order.total}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Paid</span>
+                    </td>
+                `;
+                paymentsTableBody.appendChild(row);
+            });
+        }
+
+        function loadGalleryManagement() {
+            const galleryGrid = document.getElementById('admin-gallery-grid');
+            galleryGrid.innerHTML = '';
+
+            artPrints.forEach(print => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm';
+                galleryItem.innerHTML = `
+                    <img src="${print.image}" alt="${print.alt}" class="w-full h-48 object-cover" />
+                    <div class="p-4">
+                        <h5 class="font-bold text-gray-800 mb-1">${print.title}</h5>
+                        <p class="text-gray-600 text-sm mb-2">${print.description}</p>
+                        <p class="text-purple-600 font-semibold mb-3">$${print.basePrice}</p>
+                        <div class="flex space-x-2">
+                            <button onclick="editArtwork(${print.id})" class="flex-1 px-3 py-2 bg-purple-100 text-purple-700 rounded text-sm hover:bg-purple-200">Edit</button>
+                            <button onclick="deleteArtwork(${print.id})" class="flex-1 px-3 py-2 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200">Delete</button>
+                        </div>
+                    </div>
+                `;
+                galleryGrid.appendChild(galleryItem);
+            });
+        }
+
+        function editArtwork(artworkId) {
+            const artwork = artPrints.find(art => art.id === artworkId);
+            if (artwork) {
+                const newTitle = prompt('Edit title:', artwork.title);
+                const newDescription = prompt('Edit description:', artwork.description);
+                const newPrice = prompt('Edit base price:', artwork.basePrice);
+
+                if (newTitle !== null) artwork.title = newTitle;
+                if (newDescription !== null) artwork.description = newDescription;
+                if (newPrice !== null && !isNaN(newPrice)) artwork.basePrice = parseFloat(newPrice);
+
+                loadArtPrints();
+                loadGalleryManagement();
+                alert('Artwork updated successfully!');
+            }
+        }
+
+        function deleteArtwork(artworkId) {
+            if (confirm('Are you sure you want to delete this artwork?')) {
+                const index = artPrints.findIndex(art => art.id === artworkId);
+                if (index > -1) {
+                    artPrints.splice(index, 1);
+                    loadArtPrints();
+                    loadGalleryManagement();
+                    alert('Artwork deleted successfully!');
+                }
+            }
+        }
+
+        function loadPriceSettings() {
+            const priceSettings = document.getElementById('price-settings');
+            priceSettings.innerHTML = `
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <h5 class="font-bold text-gray-800 mb-4">Size Pricing</h5>
+                    <div class="space-y-4">
+                        ${Object.entries(sizeOptions).map(([size, price]) => `
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700">${size.replace('x', ' x ')}"</span>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-gray-500">$</span>
+                                    <input type="number" value="${price}" min="0" step="0.01" class="w-20 px-2 py-1 border border-gray-300 rounded text-center" onchange="updateSizePrice('${size}', this.value)">
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <h5 class="font-bold text-gray-800 mb-4">Paper Type Pricing (Additional)</h5>
+                    <div class="space-y-4">
+                        ${Object.entries(paperOptions).map(([paper, price]) => `
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700 capitalize">${paper} ${paper === 'matte' || paper === 'glossy' ? 'Finish' : paper === 'canvas' ? 'Print' : 'Print'}</span>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-gray-500">+$</span>
+                                    <input type="number" value="${price}" min="0" step="0.01" class="w-20 px-2 py-1 border border-gray-300 rounded text-center" onchange="updatePaperPrice('${paper}', this.value)">
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateSizePrice(size, newPrice) {
+            sizeOptions[size] = parseFloat(newPrice) || 0;
+            // Update the select options in the order modal
+            const sizeSelect = document.getElementById('print-size');
+            Array.from(sizeSelect.options).forEach(option => {
+                if (option.value === size) {
+                    option.text = `${size.replace('x', '" x ')}" - $${newPrice}`;
+                }
+            });
+            calculateOrderTotal();
+        }
+
+        function updatePaperPrice(paper, newPrice) {
+            paperOptions[paper] = parseFloat(newPrice) || 0;
+            // Update the select options in the order modal
+            const paperSelect = document.getElementById('paper-type');
+            Array.from(paperSelect.options).forEach(option => {
+                if (option.value === paper) {
+                    const paperName = paper.charAt(0).toUpperCase() + paper.slice(1);
+                    const suffix = paper === 'canvas' || paper === 'metal' ? ' Print' : ' Finish';
+                    const priceText = newPrice > 0 ? ` (+$${newPrice})` : '';
+                    option.text = `${paperName}${suffix}${priceText}`;
+                }
+            });
+            calculateOrderTotal();
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(event) {
+            const orderModal = document.getElementById('order-modal');
+            const artworkModal = document.getElementById('add-artwork-modal');
+            
+            if (event.target === orderModal) {
+                closeOrderModal();
+            }
+            if (event.target === artworkModal) {
+                closeArtworkModal();
+            }
+        });
     </script>
 </body>
 </html>
